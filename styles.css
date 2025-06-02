@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Source+Code+Pro&display=swap');
+
+.custom-wrapper {
+	background-color: #fafafa;
+	font-family: 'Outfit';
+	line-height: 26px;
+	padding: 40px;
+}
+
+.custom-wrapper h3 {
+	font-size: 32px;
+	font-weight: 600;
+	margin-bottom: 32px;
+	text-align: center;
+}
+
+.custom-wrapper .custom-bold {
+	border: 1px solid black;
+	border-radius: 10px;
+	margin-bottom: 16px;
+	padding: 16px;
+}
+
+.custom-wrapper .custom-bold__inline-code {
+	background-color: #ffbaff;
+	border-radius: 4px;
+	margin: 0 2px;
+	padding: 2px 6px 4px 6px;
+}
+
+.custom-wrapper .custom-normal {
+	font-weight: normal;
+	margin-bottom: 16px;
+	padding: 0 20px;
+}
+
+.custom-wrapper .custom-normal__inline-code {
+	background-color: #ddd;
+	border-radius: 4px;
+	margin: 0 2px;
+	padding: 2px 6px 4px 6px;
+}
+
+.custom-wrapper .custom-bg-blue {
+	background-color: #dcdaff;
+}
+
+.custom-wrapper .custom-bg-rose {
+	background-color: #ffa4ff;
+}
+
+.custom-wrapper .custom-code {
+	background-color: #fff;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-top-right-radius: 10px;
+	border: 1px solid black;
+	display: flex;
+	flex-direction: row;
+	font-family: 'Source Code Pro';
+	font-weight: 600;
+	margin: 0 96px 16px 96px;
+	padding: 16px;
+}
+
+.custom-wrapper .custom-code-file {
+	background-color: #000;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	color: #fff;
+	font-family: 'Outfit';
+	font-size: 12px;
+	font-weight: 600;
+	margin: 48px 96px 0 96px;
+	padding: 4px 16px;
+	width: fit-content;
+}
+
+iframe {
+	border: none;
+	border-radius: 10px;
+	height: 400px;
+	width: 100%;
+}

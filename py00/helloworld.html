@@ -1,0 +1,54 @@
+<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+<script>
+
+        let pyodideReady = loadPyodide();
+
+        async function runPython() {
+            const outputElement = document.getElementById("output");
+            const code = document.getElementById("code").value + `
+
+import unittest
+import io
+
+class TestAdd(unittest.TestCase):
+    def test_add_positive(self):
+        captured_output = io.StringIO()
+        sys.stdout = captured_output
+        output = captured_output.getvalue()
+        self.assertEqual(output, "hello world")
+
+if __name__ == "__main__":
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestAdd)
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
+			`;
+
+            outputElement.textContent = "Running...";
+
+            const pyodide = await pyodideReady;
+
+            try {
+                // Redirect stdout and stderr
+                await pyodide.runPythonAsync(`
+				import sys
+				from io import StringIO
+				sys.stdout = sys.stderr = mystdout = StringIO()
+			   `);
+
+                // Run user code
+                await pyodide.runPythonAsync(code);
+
+                // Show output
+                const result = await pyodide.runPythonAsync("mystdout.getvalue()");
+                outputElement.textContent = result;
+            } catch (err) {
+                outputElement.textContent = '🤔 Hmm, something went wrong! Take a look at your code.';
+            }
+        }
+</script>
+<h1>Paste Python Code + Tests</h1>
+<textarea id="code" rows="20" cols="80">
+</textarea>
+<br>
+<button onclick="runPython()">Run Tests</button>
+<pre id="output"></pre>
