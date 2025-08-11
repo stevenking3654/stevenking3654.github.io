@@ -46,14 +46,14 @@ globalThis.loadPyodide=loadPyodide.loadPyodide;
     indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
   });
 
-  // 2) Load Monaco loader then create the editor
-  try {
-    await loadScript('https://unpkg.com/monaco-editor@0.34.0/min/vs/loader.js');
-  } catch (err) {
-    console.error(err);
-    document.getElementById('results')?.textContent = 'Failed to load Monaco loader.';
-    return;
-  }
+  // // 2) Load Monaco loader then create the editor
+  // try {
+  //   await loadScript('https://unpkg.com/monaco-editor@0.34.0/min/vs/loader.js');
+  // } catch (err) {
+  //   console.error(err);
+  //   document.getElementById('results')?.textContent = 'Failed to load Monaco loader.';
+  //   return;
+  // }
 
   // Promise to signal editor readiness
   let editorReadyResolve;
