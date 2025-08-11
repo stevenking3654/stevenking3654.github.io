@@ -80,7 +80,7 @@
   }
 
   // 3) Define the global runTests function used by the page's Run button
-  window.runTests = async function () {
+  const runTests = async function () {
     const resultsEl = document.getElementById('results');
     if (!resultsEl) {
       console.warn('No #results element found on the page.');
