@@ -80,7 +80,7 @@ globalThis.loadPyodide=loadPyodide.loadPyodide;
     });
   } catch (err) {
     console.error('Monaco init error', err);
-    document.getElementById('results')?.textContent = 'Failed to initialize editor.';
+    document.getElementById('results').textContent = 'Failed to initialize editor.';
     return;
   }
 
