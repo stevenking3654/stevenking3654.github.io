@@ -1,0 +1,310 @@
+
+
+<script>
+(async function () {
+  // Utility to dynamically load external scripts
+  function loadScript(src, attrs = {}) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      Object.keys(attrs).forEach(k => s.setAttribute(k, attrs[k]));
+      s.onload = () => resolve();
+      s.onerror = (e) => reject(new Error('Failed to load ' + src));
+      document.head.appendChild(s);
+    });
+  }
+
+  // Provide a cross-origin-safe worker loader for Monaco (must be set BEFORE loading loader.js)
+  window.MonacoEnvironment = {
+    getWorkerUrl: function (moduleId, label) {
+      const monacoBase = 'https://unpkg.com/monaco-editor@0.34.0/min/';
+      const workerCode = `
+        self.MonacoEnvironment = { baseUrl: '${monacoBase}' };
+        importScripts('${monacoBase}vs/base/worker/workerMain.js');
+      `;
+      const blob = new Blob([workerCode], { type: 'text/javascript' });
+      return URL.createObjectURL(blob);
+    }
+  };
+
+  // 1) Load Pyodide
+  try {
+    await loadScript('https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js');
+  } catch (err) {
+    console.error(err);
+    document.getElementById('results')?.textContent = 'Failed to load Pyodide.';
+    return;
+  }
+
+  // Initialize Pyodide (store promise on window so other scripts can use it)
+  window.pyodideReadyPromise = loadPyodide({
+    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
+  });
+
+  // 2) Load Monaco loader then create the editor
+  try {
+    await loadScript('https://unpkg.com/monaco-editor@0.34.0/min/vs/loader.js');
+  } catch (err) {
+    console.error(err);
+    document.getElementById('results')?.textContent = 'Failed to load Monaco loader.';
+    return;
+  }
+
+  // Promise to signal editor readiness
+  let editorReadyResolve;
+  window.editorReadyPromise = new Promise((res) => { editorReadyResolve = res; });
+
+  // Configure require and create editor
+  try {
+    require.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.34.0/min/vs' }});
+    require(['vs/editor/editor.main'], function () {
+      // Create editor instance
+      window.editor = monaco.editor.create(document.getElementById('editor'), {
+        value: [
+          "def add_numbers(a, b):",
+          "    # Write your code here",
+          "    return a + b"
+        ].join('\n'),
+        language: 'python',
+        theme: 'vs-dark',
+        fontSize: 14,
+        automaticLayout: true,
+        minimap: { enabled: false }
+      });
+      editorReadyResolve(window.editor);
+    });
+  } catch (err) {
+    console.error('Monaco init error', err);
+    document.getElementById('results')?.textContent = 'Failed to initialize editor.';
+    return;
+  }
+
+  // 3) Define the global runTests function used by the page's Run button
+  window.runTests = async function () {
+    const resultsEl = document.getElementById('results');
+    if (!resultsEl) {
+      console.warn('No #results element found on the page.');
+    }
+
+    // Wait for both Pyodide and the editor to be ready
+    try {
+      const [pyodide] = await Promise.all([window.pyodideReadyPromise, window.editorReadyPromise]);
+      // get user code from editor (fallback to a safe stub if editor isn't ready)
+      const userCode = (window.editor && window.editor.getValue) ? window.editor.getValue() : 'def add_numbers(a,b):\\n    return None';
+
+      // Test harness returns a single string (so pyodide.runPythonAsync resolves to that string)
+      const testCode = `
+def run_tests():
+    tests = [((2, 3), 5), ((-1, 1), 0), ((10, 25), 35)]
+    output = []
+    passed = 0
+    for (a, b), expected in tests:
+        try:
+            result = add_numbers(a, b)
+            if result == expected:
+                output.append(f"✅ add_numbers({a}, {b}) == {expected}")
+                passed += 1
+            else:
+                output.append(f"❌ add_numbers({a}, {b}) returned {result}, expected {expected}")
+        except Exception as e:
+            output.append(f"❌ add_numbers({a}, {b}) raised an error: {e}")
+    output.append(f"\\nScore: {passed}/{len(tests)}")
+    return "\\n".join(output)
+`;
+
+      // Compose final code: user code + test harness + call to run_tests()
+      const finalCode = userCode + '\\n' + testCode + '\\nrun_tests()';
+
+      // Give immediate UI feedback that tests are running
+      if (resultsEl) resultsEl.textContent = 'Running tests...';
+
+      // Execute the composed code and await the returned string
+      let pyResult = await pyodide.runPythonAsync(finalCode);
+
+      // pyResult is a Python str converted to JS string
+      if (resultsEl) resultsEl.textContent = String(pyResult);
+      return pyResult;
+    } catch (err) {
+      console.error('runTests error', err);
+      if (document.getElementById('results')) {
+        document.getElementById('results').textContent = 'Error running tests: ' + err;
+      }
+      return null;
+    }
+  };
+
+  // Optional: Auto-run a quick health-check when both systems are loaded
+  try {
+    await Promise.all([window.pyodideReadyPromise, window.editorReadyPromise]);
+    const rEl = document.getElementById('results');
+    if (rEl && (!rEl.textContent || rEl.textContent.includes('Running tests...'))) {
+      rEl.textContent = 'Ready — press "Run Tests" to check your solution!';
+    }
+  } catch (_) { /* ignore */ }
+
+})();
+</script>
+
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(120deg, #f6f9fc, #eef3f7);
+        margin: 0;
+        padding: 0;
+        color: #2c3e50;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #ffffff;
+        padding: 15px 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .points {
+        background: #ffcc00;
+        padding: 8px 14px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1rem;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .points::before { content: "⭐"; }
+
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .section {
+        background: white;
+        border-radius: 12px;
+        padding: 20px 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        margin-bottom: 20px;
+    }
+
+    .section h2 {
+        font-size: 1.4rem;
+        margin-bottom: 12px;
+        color: #34495e;
+    }
+
+    .description { font-size: 1rem; line-height: 1.6; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.95rem; }
+    th, td { padding: 10px; border-bottom: 1px solid #ecf0f1; text-align: left; }
+    th { background: #f9fafb; font-weight: 600; }
+    .steps-list { list-style: none; padding: 0; }
+    .steps-list li {
+        background: #f8faff;
+        border-left: 5px solid #4a90e2;
+        padding: 12px 15px;
+        margin-bottom: 12px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
+    .steps-list li::before { content: "💡 "; }
+    .highlight { background: #fff6e6; border-radius: 8px; padding: 4px 6px; font-weight: 500; }
+
+    #editor {
+        height: 300px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .run-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        background: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .run-btn:hover { background: #3a7ac7; }
+
+    .results {
+        margin-top: 15px;
+        padding: 10px;
+        background: #f4f6f8;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        white-space: pre-wrap;
+        min-height: 60px;
+    }
+
+    @media (max-width: 900px) {
+        .container { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="header">
+    <div class="title">🐍 Python Challenge #1</div>
+    <div class="points">1 / 10</div>
+</div>
+
+<div class="container">
+    <!-- Problem Panel -->
+    <div>
+        <div class="section">
+            <h2>Problem Description</h2>
+            <p class="description">
+                Welcome, young coder! 🚀 Your mission is to write a function 
+                <span class="highlight">add_numbers(a, b)</span> that takes two numbers and returns their sum.  
+                The faster you solve it, the more points you earn. Clean code = happy code! ✨
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Example Input/Output</h2>
+            <table>
+                <thead>
+                    <tr><th>Input</th><th>Expected Output</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>add_numbers(2, 3)</td><td>5</td></tr>
+                    <tr><td>add_numbers(-1, 1)</td><td>0</td></tr>
+                    <tr><td>add_numbers(10, 25)</td><td>35</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Steps to Success</h2>
+            <ul class="steps-list">
+                <li>Understand what the function needs to do 🤔</li>
+                <li>Write the function with two parameters: <code>a</code> and <code>b</code> ✍️</li>
+                <li>Return the sum of the two numbers ➕</li>
+                <li>Test your function with the examples above ✅</li>
+                <li>Submit and collect your points! 🏆</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Editor Panel -->
+    <div>
+        <div id="editor"></div>
+        <button class="run-btn" onclick="runTests()">Run Tests</button>
+        <div class="results" id="results">Your test results will appear here...</div>
+    </div>
+</div>
