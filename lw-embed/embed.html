@@ -1,1 +1,53 @@
+<link href="styles.css rel="stylesheet" />
+<script src="pyodide.js"></script>
 
+<div class="header">
+    <div class="title">🐍 Python Challenge #1</div>
+    <div class="points">1 / 10</div>
+</div>
+
+<div class="container">
+    <!-- Problem Panel -->
+    <div>
+        <div class="section">
+            <h2>Problem Description</h2>
+            <p class="description">
+                <div>Welcome, young coder! 🚀</div><div>Your mission is to write a function 
+                <span class="highlight">add_numbers(a, b)</span> that takes two numbers and returns their sum.</div>
+                <div>The faster you solve it, the more points you earn. Clean code = happy code! ✨</div>
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Example Input/Output</h2>
+            <table>
+                <thead>
+                    <tr><th>Input</th><th>Expected Output</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>add_numbers(2, 3)</td><td>5</td></tr>
+                    <tr><td>add_numbers(-1, 1)</td><td>0</td></tr>
+                    <tr><td>add_numbers(10, 25)</td><td>35</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Steps to Success</h2>
+            <ul class="steps-list">
+                <li>Understand what the function needs to do 🤔</li>
+                <li>Write the function with two parameters: <code>a</code> and <code>b</code> ✍️</li>
+                <li>Return the sum of the two numbers ➕</li>
+                <li>Test your function with the examples above ✅</li>
+                <li>Submit and collect your points! 🏆</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Editor Panel -->
+    <div>
+        <div id="editor"></div>
+        <button class="run-btn" onclick="runTests()">Run Tests</button>
+        <div class="results" id="results">Your test results will appear here...</div>
+    </div>
+</div>
