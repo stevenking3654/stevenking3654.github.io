@@ -69,6 +69,7 @@ body {
     font-size: 1.4rem;
     margin-bottom: 12px;
     font-weight: 700;
+    color: #f8f8f2;
 }
 
 .description { font-size: 1rem; line-height: 1.6; color: #eceff4; }
