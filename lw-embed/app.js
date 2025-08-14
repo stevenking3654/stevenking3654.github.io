@@ -40,7 +40,7 @@
           "print(sum)"
         ].join("\n"),
         language: 'python',
-        theme: 'vs-light',
+        theme: 'vs-dark',
         fontSize: 14,
         minimap: { enabled: false },
         automaticLayout: true
