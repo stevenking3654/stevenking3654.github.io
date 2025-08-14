@@ -110,3 +110,7 @@ th { background: #f9fafb; font-weight: 600; }
 * {
   font-family: 'Outfit', monospace !important;
 }
+
+#editor {
+    font-family: 'PT Mono' !important;
+}
