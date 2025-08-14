@@ -52,7 +52,7 @@
   // Load Pyodide
   await loadScript(PYODIDE_SRC);
   window.pyodideReady = loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/' });
-
+/*
   // Run Tests for FULL SCRIPTS
   window.runTests = async function () {
     const resultsEl = document.getElementById('results');
@@ -115,5 +115,70 @@ sys.stdout = _stdout
     outputLog.push(`\nScore: ${passed}/${testCases.length}`);
     resultsEl.textContent = outputLog.join("\n");
   };
+*/
 
+window.runTests = async function () {
+  const resultsEl = document.getElementById('results');
+  const [editor, pyodide] = await Promise.all([editorReady, window.pyodideReady]);
+
+  const userCode = editor.getValue();
+
+  // Example test cases for loops
+  // The first value is N, followed by N commands
+  const testCases = [
+    { input: ["3", "jump", "run", "stop"], expected: "jump\nrun\nstop" },
+    { input: ["2", "hello", "world"], expected: "hello\nworld" },
+    { input: ["4", "a", "b", "c", "d"], expected: "a\nb\nc\nd" }
+  ];
+
+  let outputLog = [];
+  let passed = 0;
+
+  for (const { input, expected } of testCases) {
+    try {
+      // isolated namespace for each run
+      const namespace = pyodide.globals.get("dict")();
+
+      // Override input() to feed the test case values in sequence
+      pyodide.runPython(`
+import sys
+from io import StringIO
+
+_input_data = ${JSON.stringify(input)}
+_input_index = 0
+def input(prompt=None):
+    global _input_index
+    if _input_index < len(_input_data):
+        val = _input_data[_input_index]
+        _input_index += 1
+        return _input_data[_input_index - 1]
+    raise EOFError("No more input")
+`, { globals: namespace });
+
+      // Capture print() output
+      pyodide.runPython(`
+_stdout = StringIO()
+sys.stdout = _stdout
+`, { globals: namespace });
+
+      // Run student code
+      await pyodide.runPythonAsync(userCode, { globals: namespace });
+
+      // Get output
+      const output = pyodide.runPython(`_stdout.getvalue().strip()`, { globals: namespace });
+
+      if (output === expected) {
+        outputLog.push(`✅ Test passed with input: ${input.join(", ")}`);
+        passed++;
+      } else {
+        outputLog.push(`❌ Test failed. Input: ${input.join(", ")} | Got: "${output}" | Expected: "${expected}"`);
+      }
+    } catch (err) {
+      outputLog.push(`❌ Error with input ${input.join(", ")}: ${err}`);
+    }
+  }
+
+  outputLog.push(`\nScore: ${passed}/${testCases.length}`);
+  resultsEl.textContent = outputLog.join("\n");
+};
 })();
