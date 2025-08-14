@@ -116,7 +116,7 @@ sys.stdout = _stdout
     resultsEl.textContent = outputLog.join("\n");
   };
 */
-
+/*
 window.runTests = async function () {
   const resultsEl = document.getElementById('results');
   const [editor, pyodide] = await Promise.all([editorReady, window.pyodideReady]);
@@ -181,4 +181,69 @@ sys.stdout = _stdout
   outputLog.push(`\nScore: ${passed}/${testCases.length}`);
   resultsEl.textContent = outputLog.join("\n");
 };
+*/
+window.runTests = async function () {
+  const resultsEl = document.getElementById('results');
+  const [editor, pyodide] = await Promise.all([editorReady, window.pyodideReady]);
+
+  const userCode = editor.getValue();
+
+  // Test cases: arrays of commands ending with "end"
+  const testCases = [
+    { input: ["jump", "run", "stop", "end"], expected: "jump\nrun\nstop" },
+    { input: ["hello", "world", "end"], expected: "hello\nworld" },
+    { input: ["a", "b", "c", "d", "end"], expected: "a\nb\nc\nd" }
+  ];
+
+  let outputLog = [];
+  let passed = 0;
+
+  for (const { input, expected } of testCases) {
+    try {
+      // Create isolated namespace
+      const namespace = pyodide.globals.get("dict")();
+
+      // Override input() to feed values until "end"
+      pyodide.runPython(`
+import sys
+from io import StringIO
+
+_input_data = ${JSON.stringify(input)}
+_input_index = 0
+
+def input(prompt=None):
+    global _input_index
+    if _input_index < len(_input_data):
+        val = _input_data[_input_index]
+        _input_index += 1
+        return val
+    raise EOFError("No more input")
+
+_stdout = StringIO()
+sys.stdout = _stdout
+`, { globals: namespace });
+
+      // Run student code
+      await pyodide.runPythonAsync(userCode, { globals: namespace });
+
+      // Get output
+      const output = pyodide.runPython(`_stdout.getvalue().strip()`, { globals: namespace });
+
+      if (output === expected) {
+        outputLog.push(`✅ Test passed. Input: ${input.slice(0, -1).join(", ")}`);
+        passed++;
+      } else {
+        outputLog.push(`❌ Test failed. Input: ${input.slice(0, -1).join(", ")} | Got: "${output}" | Expected: "${expected}"`);
+      }
+
+    } catch (err) {
+      outputLog.push(`❌ Error with input ${input.slice(0, -1).join(", ")}: ${err}`);
+    }
+  }
+
+  outputLog.push(`\nScore: ${passed}/${testCases.length}`);
+  resultsEl.textContent = outputLog.join("\n");
+};
+
+
 })();
