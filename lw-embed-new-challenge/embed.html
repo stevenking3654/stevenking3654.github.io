@@ -7,7 +7,7 @@
 <script src="app.js"></script>
 
 <div class="header">
-    <div class="title">🐍 Python Challenge #1</div>
+    <div class="title">💸 Challenge 07. Currency Converter</div>
     <div class="points">1 / 10</div>
 </div>
 
@@ -17,9 +17,21 @@
         <div class="section">
             <h2>Problem Description</h2>
             <p class="description">
-                <div>Welcome, young coder! 🚀</div><div>Your mission is to write a function 
-                <span class="highlight">add_numbers(a, b)</span> that takes two numbers and returns their sum.</div>
-                <div>The faster you solve it, the more points you earn. Clean code = happy code! ✨</div>
+                <div>Welcome, young coder! 🚀</div><div>Your mission is to write a program to convert <b>USD (United States Dollar)</b> to <b>EUR (Euro)</b> using a fixed rate. </div>
+				<div><b>📏 Conversion rate</b>: `1 USD = 0.85 EUR`</div>
+				<div>This time, we will <span class="highlight">round</span> the result to <b>2 decimal places</b>, just like real-world banking applications. </div>
+				<div>The faster you solve it, the more points you earn. Clean code = happy code! ✨</div>
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>🏆 Quest</h2>
+            <p class="description">
+                <div>Write a Python program that:</div>
+				<div>- Asks for an amount in <b>USD</b></div>
+				<div>- Converts it to <b>EUR</b> using a fixed rate</div>
+				<div>- Rounds the result to <b>2 decimal places</b></div>
+				<div>- Prints the final value with a `€` symbol</div>
             </p>
         </div>
 
@@ -30,9 +42,9 @@
                     <tr><th>Input</th><th>Expected Output</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>add_numbers(2, 3)</td><td>5</td></tr>
-                    <tr><td>add_numbers(-1, 1)</td><td>0</td></tr>
-                    <tr><td>add_numbers(10, 25)</td><td>35</td></tr>
+                    <tr><td>100</td><td>Converted: €85.0</td></tr>
+                    <tr><td>23.5</td><td>Converted: €19.98</td></tr>
+                    <tr><td>57.25</td><td>Converted: €43.99</td></tr>
                 </tbody>
             </table>
         </div>
@@ -40,11 +52,11 @@
         <div class="section">
             <h2>Steps to Success</h2>
             <ul class="steps-list">
-                <li>Understand what the function needs to do 🤔</li>
-                <li>Write the function with two parameters: <code>a</code> and <code>b</code> ✍️</li>
-                <li>Return the sum of the two numbers ➕</li>
-                <li>Test your function with the examples above ✅</li>
-                <li>Submit and collect your points! 🏆</li>
+                <li>Understand what the converter needs to do 🤔.</li>
+                <li>💬 Ask the user how many <b>USD</b> they want to convert.</li>
+                <li>📝 Use the formula: <code>eur = usd * 0.85</code>.</li>
+                <li>📝 Use <code>round(eur, 2)</code> to round it.</li>
+                <li>🖨️ Print something like: <code>"Converted: €72.25"</code>.</li>
             </ul>
         </div>
     </div>
