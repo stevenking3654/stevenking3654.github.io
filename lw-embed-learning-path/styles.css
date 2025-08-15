@@ -1,152 +1,134 @@
-/* style.css */
-:root{
-  --taste-bg: #0f1115;
-  --taste-card: #151923;
-  --taste-card-hover:#1b2130;
-  --taste-text:#eef2ff;
-  --taste-muted:#aab3c5;
-  --taste-accent:#6ee7ff;
-  --taste-accent-2:#8b5cf6;
-  --taste-good:#22c55e;
-  --taste-border: #243043;
-  --taste-shadow: 0 10px 30px rgba(0,0,0,.35);
-  --radius-lg:14px; --radius-sm:10px;
-}
-@media (prefers-color-scheme: light){
-  :root{
-    --taste-bg:#ffffff;
-    --taste-card:#f7f8fb;
-    --taste-card-hover:#eef2ff;
-    --taste-text:#0b1020;
-    --taste-muted:#485369;
-    --taste-border:#d9e0ee;
-    --taste-shadow: 0 10px 25px rgba(10,20,60,.08);
-  }
+:root {
+  --bg: #fff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --card-bg: #f9fafb;
+  --hover-bg: #f3f4f6;
+  --accent: #6366f1;
+  --success: #10b981;
+  --radius: 12px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
-.lw-taste{
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
-  background: var(--taste-bg);
-  color: var(--taste-text);
-  border: 1px solid var(--taste-border);
-  border-radius: 18px;
-  padding: clamp(20px, 3vw, 32px);
-  box-shadow: var(--taste-shadow);
-}
-.taste-head h2{
-  margin: 0 0 8px 0;
-  font-size: clamp(22px, 2.2vw, 32px);
-  letter-spacing: -.01em;
-}
-.taste-sub{
-  margin: 0 0 18px 0;
-  color: var(--taste-muted);
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
 }
 
-.taste-controls{
-  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+.concepts-section {
+  max-width: 1100px;
+  margin: auto;
+  padding: 2rem;
 }
-.filter-btn{
-  border: 1px solid var(--taste-border);
-  background: transparent;
-  color: var(--taste-text);
-  padding: 8px 12px;
+
+.concepts-header h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.concepts-sub {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+}
+
+.concepts-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
   border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
   cursor: pointer;
-  font-size: 14px;
-  transition: background .2s, border-color .2s, transform .02s;
-}
-.filter-btn:hover{ background: var(--taste-card-hover) }
-.filter-btn:active{ transform: translateY(1px) }
-.filter-btn.is-active{
-  background: linear-gradient(90deg, var(--taste-accent), var(--taste-accent-2));
-  color: #0b1020;
-  border-color: transparent;
+  transition: all 0.2s;
 }
 
-.taste-progress{
-  background: var(--taste-card);
-  border: 1px solid var(--taste-border);
-  border-radius: var(--radius-lg);
-  padding: 12px;
-  margin-bottom: 18px;
-}
-.progress-row{
-  display:flex; justify-content:space-between; gap: 12px; align-items:center; margin-bottom: 10px;
-  font-size: 14px; color: var(--taste-muted);
-}
-.progress-track{
-  height: 10px; border-radius: 999px; background: rgba(160,170,200,.15); position: relative; overflow: hidden;
-}
-.progress-fill{
-  position: absolute; left:0; top:0; height:100%; width:0%;
-  background: linear-gradient(90deg, var(--taste-accent), var(--taste-accent-2));
-  border-radius: inherit; transition: width .35s ease;
+.filter-btn:hover {
+  background: var(--hover-bg);
 }
 
-.taste-grid{
+.filter-btn.is-active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.concepts-grid {
+  margin-top: 2rem;
   display: grid;
-  grid-template-columns: repeat( auto-fit, minmax(220px, 1fr) );
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
 }
 
-.taste-card{
-  background: var(--taste-card);
-  border:1px solid var(--taste-border);
-  border-radius: var(--radius-lg);
-  padding: 14px;
-  display:flex; gap:12px; align-items: flex-start;
-  position: relative;
+.concept-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  gap: 0.75rem;
   cursor: pointer;
-  transition: transform .08s ease, background .2s ease, border-color .2s ease;
-}
-.taste-card:hover{ background: var(--taste-card-hover); border-color: transparent; transform: translateY(-1px) }
-.taste-card[aria-pressed="true"]{ outline: 2px solid var(--taste-good); }
-.taste-card .icon{
-  flex: 0 0 auto; width: 32px; height: 32px;
-  display:grid; place-items:center;
-  border-radius: 10px; background: rgba(110,231,255,.12);
-  border: 1px solid var(--taste-border);
-}
-.taste-card .text{ flex: 1 1 auto }
-.taste-card h3{
-  font-size: 16px; margin: 0 0 4px 0; line-height: 1.25;
-}
-.taste-card p{
-  margin: 0; font-size: 13px; color: var(--taste-muted);
-}
-.chip-row{
-  display:flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
-}
-.chip{
-  font-size: 11px; border:1px solid var(--taste-border); padding: 4px 8px; border-radius: 999px; color: var(--taste-muted);
-  background: rgba(255,255,255,.03);
-}
-.xp-badge{
-  position: absolute; right: 10px; top: 10px;
-  font-size: 11px; padding: 4px 8px; border-radius: 8px;
-  background: rgba(139,92,246,.16); color: #c7b3ff; border: 1px solid var(--taste-border);
-}
-.state-dot{
-  position: absolute; left: 10px; top: 10px; width: 10px; height: 10px; border-radius: 50%;
-  background: rgba(255,255,255,.16); border:1px solid var(--taste-border);
-}
-.taste-card[aria-pressed="true"] .state-dot{ background: var(--taste-good); border-color: rgba(255,255,255,.35) }
-
-.tooltip{
-  position: absolute; inset: auto auto 12px 12px; transform: translateY(8px);
-  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
-  font-size: 12px; background: #0b1020; color: #e6e8ef; border:1px solid var(--taste-border);
-  border-radius: 10px; padding: 10px; max-width: 280px; box-shadow: var(--taste-shadow); z-index: 5;
-}
-.taste-card:hover .tooltip, .taste-card:focus .tooltip, .taste-card:focus-within .tooltip{
-  opacity: 1; transform: translateY(0);
+  align-items: flex-start;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, background 0.2s;
 }
 
-.taste-footnote{
-  color: var(--taste-muted); font-size: 12px; margin-top: 14px;
+.concept-card:hover {
+  background: var(--hover-bg);
+  transform: translateY(-2px);
 }
 
-@media (prefers-reduced-motion: reduce){
-  .progress-fill, .taste-card{ transition: none }
+.concept-card[aria-pressed="true"] {
+  border-color: var(--success);
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: rgba(99,102,241,0.1);
+}
+
+.concept-content h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.concept-content p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.chip-row {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--muted);
+}
+
+.concepts-footnote {
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  color: var(--muted);
 }
