@@ -1,0 +1,117 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(120deg, #f6f9fc, #eef3f7);
+    margin: 0;
+    padding: 0;
+    color: #2c3e50;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 15px 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.points {
+    background: #ffcc00;
+    padding: 8px 14px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.points::before { content: "⭐"; }
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    margin-bottom: 20px;
+}
+
+.section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    color: #34495e;
+}
+
+.description { font-size: 1rem; line-height: 1.6; }
+table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.95rem; }
+th, td { padding: 10px; border-bottom: 1px solid #ecf0f1; text-align: left; }
+th { background: #f9fafb; font-weight: 600; }
+.steps-list { list-style: none; padding: 0; }
+.steps-list li {
+    background: #f8faff;
+    border-left: 5px solid #4a90e2;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+.steps-list li::before { content: "💡 "; }
+.highlight { background: #fff6e6; border-radius: 8px; padding: 4px 6px; font-weight: 500; }
+
+#editor {
+    height: 300px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.run-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.run-btn:hover { background: #3a7ac7; }
+
+.results {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f4f6f8;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    white-space: pre-wrap;
+    min-height: 60px;
+}
+
+@media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+}
+
+.section {
+  font-family: 'Outfit', monospace !important;
+}
+
+#editor, #editor * {
+    font-family: 'PT Mono' !important;
+}
