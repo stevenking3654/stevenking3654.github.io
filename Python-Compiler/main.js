@@ -41,6 +41,15 @@ function setupInput() {
     });
 }
 
+// Confetti effect
+function triggerConfetti() {
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+}
+
 // Run user code
 document.getElementById('runBtn').addEventListener('click', async () => {
     const code = editor.getValue();
@@ -50,6 +59,7 @@ document.getElementById('runBtn').addEventListener('click', async () => {
         pyodide.stderr = (msg) => appendConsole("❌ " + msg, "fail");
         await pyodide.runPythonAsync(code);
         appendConsole("🎉 <span class='badge'>Code Ran Successfully!</span>", "success");
+        triggerConfetti();
     } catch (err) {
         appendConsole("❌ " + err, "fail");
     }
@@ -89,6 +99,7 @@ out.getvalue()
             appendConsole("💥 <span class='badge'>Tests Failed</span>\n" + output, "fail");
         } else {
             appendConsole("✅ <span class='badge'>All Tests Passed!</span>\n" + output, "success");
+            triggerConfetti();
         }
     } catch (err) {
         appendConsole("❌ " + err, "fail");
