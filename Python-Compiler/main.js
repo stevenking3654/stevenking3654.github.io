@@ -1,60 +1,69 @@
 let pyodide = null;
 let editor = null;
 let inputQueue = [];
+let inputResolve = null;
 
-// Initialize Monaco Editor
+// ---------- Initialize Monaco ----------
 require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs' }});
 require(['vs/editor/editor.main'], function () {
     editor = monaco.editor.create(document.getElementById('editor'), {
-        value: `# Write your Python code here\n\n`,
+        value: `# Write your Python code here\n\ndef add(x):\n    return x + 5\n\na = int(input("Enter a number: "))\nprint("Result:", add(a))`,
         language: 'python',
         theme: 'vs-dark',
         automaticLayout: true
     });
 });
 
-// Initialize Pyodide
+// ---------- Initialize Pyodide ----------
 async function initPyodide() {
     pyodide = await loadPyodide();
-    appendConsole("✅ <span class='info'>Pyodide loaded. Ready to run Python code!</span>");
+    appendConsole("✅ <span class='info'>Pyodide loaded. Ready!</span>");
+    document.getElementById('runBtn').disabled = false;
+    document.getElementById('testBtn').disabled = false;
 }
 initPyodide();
 
-// Custom console output
+// ---------- Console ----------
 function appendConsole(msg, type="info") {
     const consoleDiv = document.getElementById('console');
     consoleDiv.innerHTML += `<span class="${type}">${msg}</span>\n`;
     consoleDiv.scrollTop = consoleDiv.scrollHeight;
 }
 
-// Input panel
+// ---------- Confetti ----------
+function triggerConfetti() {
+    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+}
+
+// ---------- Input Handling ----------
 document.getElementById('submit-input').addEventListener('click', () => {
     const value = document.getElementById('user-input').value;
-    inputQueue.push(value);
     document.getElementById('user-input').value = "";
+    document.getElementById('input-panel').style.display = "none";
+    if (inputResolve) {
+        inputResolve(value);
+        inputResolve = null;
+    } else {
+        inputQueue.push(value);
+    }
 });
 
-// Override input() in Pyodide
-function setupInput() {
-    pyodide.globals.set("input", (promptText) => {
-        return inputQueue.shift() || "";
+// Returns a Promise that resolves when user submits input
+function getUserInput(promptText="") {
+    return new Promise((resolve) => {
+        inputResolve = resolve;
+        document.getElementById('input-panel').style.display = "flex";
+        document.getElementById('user-input').focus();
     });
 }
 
-// Confetti effect
-function triggerConfetti() {
-    confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 }
-    });
-}
-
-// Run user code
+// ---------- Run Code ----------
 document.getElementById('runBtn').addEventListener('click', async () => {
     const code = editor.getValue();
+    if (!pyodide) return appendConsole("❌ Pyodide not loaded", "fail");
     try {
-        setupInput();
+        // Override input() dynamically
+        pyodide.globals.set("input", getUserInput);
         pyodide.stdout = (msg) => appendConsole(msg, "info");
         pyodide.stderr = (msg) => appendConsole("❌ " + msg, "fail");
         await pyodide.runPythonAsync(code);
@@ -65,27 +74,28 @@ document.getElementById('runBtn').addEventListener('click', async () => {
     }
 });
 
-// Run unit tests
+// ---------- Run Unit Tests ----------
 document.getElementById('testBtn').addEventListener('click', async () => {
     const code = editor.getValue();
+    if (!pyodide) return appendConsole("❌ Pyodide not loaded", "fail");
+
     const testCode = `
 import unittest
-import sys
 from io import StringIO
+import sys
 
 # Capture output
 out = StringIO()
 sys.stdout = out
 
-# User code
 ${code}
 
-# Define tests (replace these with challenge-specific tests)
+# Example tests
 class TestSolution(unittest.TestCase):
-    def test_example(self):
-        self.assertEqual(add(5), 10)  # Example test; replace with real tests
+    def test_add(self):
+        self.assertEqual(add(5), 10)
+        self.assertEqual(add(0), 5)
 
-# Run tests
 suite = unittest.TestLoader().loadTestsFromTestCase(TestSolution)
 runner = unittest.TextTestRunner(stream=out, verbosity=2)
 result = runner.run(suite)
@@ -93,6 +103,7 @@ result = runner.run(suite)
 sys.stdout = sys.__stdout__
 out.getvalue()
 `;
+
     try {
         const output = await pyodide.runPythonAsync(testCode);
         if (output.includes("FAILED")) {
