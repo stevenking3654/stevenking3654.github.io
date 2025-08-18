@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Python Playground for Kids</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Python Playground for Kids</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<h1>Python Playground for Kids 🎉</h1>
+
 <div id="editor"></div>
 
-<div id="input-panel">
+<div id="input-panel" style="display:none;">
     <input type="text" id="user-input" placeholder="Type your input here">
     <button id="submit-input">Submit</button>
 </div>
 
 <div id="buttons">
-  <button id="runBtn">🏃 Run</button>
-  <button id="testBtn">🧪 Test</button>
+    <button id="runBtn" disabled>🏃 Run</button>
+    <button id="testBtn" disabled>🧪 Test</button>
 </div>
 
 <div id="console"></div>
 
-<!-- Canvas for confetti -->
 <canvas id="confetti-canvas"></canvas>
 
-<!-- Load Monaco -->
+<!-- Monaco -->
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs/loader.js"></script>
-<!-- Load Pyodide -->
+<!-- Pyodide -->
 <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
-<!-- Load Canvas Confetti -->
+<!-- Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <!-- Main JS -->
 <script src="main.js"></script>
