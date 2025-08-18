@@ -1,5 +1,6 @@
 let pyodide = null;
 let editor = null;
+let inputQueue = [];
 
 // Initialize Monaco Editor
 require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs' }});
@@ -15,21 +16,28 @@ require(['vs/editor/editor.main'], function () {
 // Initialize Pyodide
 async function initPyodide() {
     pyodide = await loadPyodide();
-    appendConsole("✅ Pyodide loaded. Ready to run Python code!");
+    appendConsole("✅ <span class='info'>Pyodide loaded. Ready to run Python code!</span>");
 }
 initPyodide();
 
 // Custom console output
-function appendConsole(msg) {
+function appendConsole(msg, type="info") {
     const consoleDiv = document.getElementById('console');
-    consoleDiv.innerHTML += msg + "\n";
+    consoleDiv.innerHTML += `<span class="${type}">${msg}</span>\n`;
     consoleDiv.scrollTop = consoleDiv.scrollHeight;
 }
+
+// Input panel
+document.getElementById('submit-input').addEventListener('click', () => {
+    const value = document.getElementById('user-input').value;
+    inputQueue.push(value);
+    document.getElementById('user-input').value = "";
+});
 
 // Override input() in Pyodide
 function setupInput() {
     pyodide.globals.set("input", (promptText) => {
-        return window.prompt(promptText || "Enter input:");
+        return inputQueue.shift() || "";
     });
 }
 
@@ -38,11 +46,12 @@ document.getElementById('runBtn').addEventListener('click', async () => {
     const code = editor.getValue();
     try {
         setupInput();
-        pyodide.stdout = (msg) => appendConsole(msg);
-        pyodide.stderr = (msg) => appendConsole("❌ " + msg);
+        pyodide.stdout = (msg) => appendConsole(msg, "info");
+        pyodide.stderr = (msg) => appendConsole("❌ " + msg, "fail");
         await pyodide.runPythonAsync(code);
+        appendConsole("🎉 <span class='badge'>Code Ran Successfully!</span>", "success");
     } catch (err) {
-        appendConsole("❌ " + err);
+        appendConsole("❌ " + err, "fail");
     }
 });
 
@@ -76,8 +85,12 @@ out.getvalue()
 `;
     try {
         const output = await pyodide.runPythonAsync(testCode);
-        appendConsole("🧪 Test Results:\n" + output);
+        if (output.includes("FAILED")) {
+            appendConsole("💥 <span class='badge'>Tests Failed</span>\n" + output, "fail");
+        } else {
+            appendConsole("✅ <span class='badge'>All Tests Passed!</span>\n" + output, "success");
+        }
     } catch (err) {
-        appendConsole("❌ " + err);
+        appendConsole("❌ " + err, "fail");
     }
 });
