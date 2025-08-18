@@ -1,0 +1,96 @@
+body {
+    font-family: 'Comic Sans MS', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #f0f8ff;
+}
+
+#editor {
+    height: 45vh;
+    border-bottom: 3px solid #4CAF50;
+    border-radius: 8px 8px 0 0;
+}
+
+#input-panel {
+    display: flex;
+    margin: 5px 10px;
+    gap: 10px;
+}
+
+#user-input {
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 2px solid #ccc;
+}
+
+#submit-input {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2196F3;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#submit-input:hover {
+    background-color: #1976D2;
+}
+
+#buttons {
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+#runBtn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#runBtn:hover {
+    background-color: #45a049;
+}
+
+#testBtn {
+    background-color: #FF9800;
+    color: white;
+}
+
+#testBtn:hover {
+    background-color: #fb8c00;
+}
+
+#console {
+    background: #1e1e2f;
+    color: #fff;
+    padding: 10px;
+    height: 35vh;
+    overflow-y: auto;
+    font-family: monospace;
+    border-top: 3px solid #4CAF50;
+    white-space: pre-wrap;
+    border-radius: 0 0 8px 8px;
+}
+.success { color: #4CAF50; font-weight: bold; }
+.fail { color: #f44336; font-weight: bold; }
+.info { color: #03A9F4; }
+.badge { display: inline-block; background: #FFD700; color: black; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 4px; }
