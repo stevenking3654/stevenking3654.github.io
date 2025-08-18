@@ -8,6 +8,11 @@ body {
     background: #f0f8ff;
 }
 
+h1 {
+    text-align: center;
+    color: #2196F3;
+}
+
 #editor {
     height: 45vh;
     border-bottom: 3px solid #4CAF50;
@@ -46,6 +51,7 @@ body {
     padding: 10px;
     display: flex;
     gap: 10px;
+    justify-content: center;
 }
 
 button {
@@ -61,23 +67,10 @@ button:hover {
     transform: scale(1.05);
 }
 
-#runBtn {
-    background-color: #4CAF50;
-    color: white;
-}
-
-#runBtn:hover {
-    background-color: #45a049;
-}
-
-#testBtn {
-    background-color: #FF9800;
-    color: white;
-}
-
-#testBtn:hover {
-    background-color: #fb8c00;
-}
+#runBtn { background-color: #4CAF50; color: white; }
+#runBtn:hover { background-color: #45a049; }
+#testBtn { background-color: #FF9800; color: white; }
+#testBtn:hover { background-color: #fb8c00; }
 
 #console {
     background: #1e1e2f;
